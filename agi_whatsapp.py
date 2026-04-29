@@ -225,8 +225,10 @@ class AGIWhatsApp:
     def __init__(self):
         self.memoria = MemoriaSQLite()
         self.contexto_maestro = self._cargar_contexto_maestro()
-        self.whatsapp_token = "2417230442079987|rK3n87av4_-lK67I065Ir2cC7Ug"
+        self.whatsapp_token = os.getenv("WHATSAPP_TOKEN", "2417230442079987|rK3n87av4_-lK67I065Ir2cC7Ug")
+        self.user_phone_number = os.getenv("USER_PHONE_NUMBER", "5491140628310")  # Número autorizado
         logger.info("AGI WhatsApp inicializado")
+        logger.info(f"Número autorizado: {self.user_phone_number}")
     
     def _cargar_contexto_maestro(self) -> str:
         """Carga contenido de CONTEXTO_MAESTRO.md."""
@@ -241,6 +243,20 @@ class AGIWhatsApp:
         except Exception as e:
             logger.error(f"Error al cargar CONTEXTO_MAESTRO.md: {e}")
             return ""
+    
+    def _verificar_usuario_autorizado(self, sender_phone: str) -> bool:
+        """Verifica si el remitente está autorizado."""
+        if not sender_phone:
+            return False
+        
+        # Normalizar números (quitar espacios, guiones, etc.)
+        sender_normalized = sender_phone.replace(" ", "").replace("-", "")
+        authorized_normalized = self.user_phone_number.replace(" ", "").replace("-", "")
+        
+        # Verificar si el número coincide (puede tener prefijo internacional o no)
+        return (sender_normalized == authorized_normalized or 
+                sender_normalized.endswith(authorized_normalized) or
+                authorized_normalized.endswith(sender_normalized))
     
     def procesar_mensaje(self, tipo: str, contenido: str, es_audio: bool = False, 
                         es_imagen: bool = False, es_video: bool = False, 
@@ -519,6 +535,17 @@ def webhook_whatsapp():
         es_imagen = data.get('is_image', False)
         es_video = data.get('is_video', False)
         es_documento = data.get('is_document', False)
+        
+        # Extraer número del remitente
+        sender_phone = data.get('sender_phone', '')
+        
+        # Verificar si el remitente está autorizado
+        if not agi._verificar_usuario_autorizado(sender_phone):
+            logger.warning(f"Mensaje no autorizado de: {sender_phone}")
+            return jsonify({
+                'status': 'unauthorized',
+                'message': 'Usuario no autorizado'
+            }), 403
         
         # Procesar mensaje
         respuesta = agi.procesar_mensaje(tipo, mensaje, es_audio, es_imagen, es_video, es_documento)
