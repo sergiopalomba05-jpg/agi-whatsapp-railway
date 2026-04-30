@@ -962,6 +962,21 @@ def telegram_webhook():
         logger.error(f"Error en webhook: {e}")
         return jsonify({'status': 'error'}), 500
 
+@app.route('/', methods=['GET'])
+def index():
+    """Endpoint raíz - redirige a health."""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'AGI Telegram Bot',
+        'timestamp': datetime.now().isoformat(),
+        'endpoints': {
+            'health': '/health',
+            'webhook': '/webhook/telegram',
+            'set_webhook': '/set_webhook',
+            'reporte_agente': '/reporte_agente'
+        }
+    }), 200
+
 @app.route('/health', methods=['GET'])
 def health():
     """Endpoint de health check."""
