@@ -1,43 +1,30 @@
 """
 Keep-Alive automático para Render
-Mantiene el servicio de Render activo enviando pings periódicos
+Mantiene el servicio activo enviando pings cada 5 minutos
 """
 import requests
 import time
+import threading
 from datetime import datetime
 
-class KeepAliveRender:
-    def __init__(self, render_url):
-        self.render_url = render_url
-        self.intervalo_segundos = 300  # 5 minutos
-        
-    def ping(self):
-        """Envía un ping al servicio de Render."""
-        try:
-            response = requests.get(self.render_url, timeout=10)
-            if response.status_code == 200:
-                print(f"✅ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Ping exitoso")
-                return True
-            else:
-                print(f"⚠️  Error {response.status_code}")
-                return False
-        except Exception as e:
-            print(f"❌ Error: {e}")
-            return False
-    
-    def iniciar(self):
-        """Inicia el ciclo de keep-alive."""
-        print(f"🚀 Iniciando Keep-Alive para {self.render_url}")
-        print("=" * 70)
-        
-        while True:
-            self.ping()
-            time.sleep(self.intervalo_segundos)
+RENDER_URL = "https://agi-telegram2-0.onrender.com/health"
+INTERVALO = 280  # 4 minutos 40 segundos
 
-def main():
-    render_url = "https://agi-telegram2-0.onrender.com"
-    keep_alive = KeepAliveRender(render_url)
-    keep_alive.iniciar()
+def ping():
+    while True:
+        try:
+            response = requests.get(RENDER_URL, timeout=10)
+            print(f"{datetime.now()} - Ping OK: {response.status_code}")
+        except Exception as e:
+            print(f"{datetime.now()} - Ping error: {e}")
+        time.sleep(INTERVALO)
+
+def iniciar_keep_alive():
+    hilo = threading.Thread(target=ping, daemon=True)
+    hilo.start()
+    print("Keep-alive iniciado")
 
 if __name__ == "__main__":
-    main()
+    iniciar_keep_alive()
+    while True:
+        time.sleep(60)
