@@ -7,6 +7,8 @@ import sys
 import json
 import logging
 import sqlite3
+import base64
+import asyncio
 from flask import Flask, request, jsonify
 from datetime import datetime
 from pathlib import Path
@@ -33,6 +35,68 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN', '')
 TELEGRAM_WEBHOOK_URL = os.getenv('TELEGRAM_WEBHOOK_URL', '')
 USER_TELEGRAM_ID = os.getenv('USER_TELEGRAM_ID', '')
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+
+
+# Funciones Multimodales
+
+async def transcribir_audio(file_path: str) -> str:
+    """
+    Transcribe audio usando Whisper API de OpenAI.
+    """
+    try:
+        import openai
+        
+        with open(file_path, "rb") as audio_file:
+            transcripcion = openai.audio.transcriptions.create(
+                model="whisper-1",
+                file=audio_file,
+                language="es"
+            )
+        return transcripcion.text
+    except Exception as e:
+        logger.error(f"Error transcribiendo audio: {e}")
+        return ""
+
+
+async def procesar_imagen(file_path: str, caption: str = "") -> List[Dict]:
+    """
+    Procesa imagen usando Claude Vision nativa.
+    """
+    try:
+        with open(file_path, "rb") as img:
+            img_b64 = base64.b64encode(img.read()).decode()
+        
+        return [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/jpeg",
+                    "data": img_b64
+                }
+            },
+            {
+                "type": "text",
+                "text": caption if caption else "Sergio te envió esta imagen. Analizala en el contexto de QuantumHive."
+            }
+        ]
+    except Exception as e:
+        logger.error(f"Error procesando imagen: {e}")
+        return [{"type": "text", "text": caption if caption else ""}]
+
+
+async def procesar_video(file_path: str) -> str:
+    """
+    Procesa video extrayendo frames clave.
+    """
+    try:
+        # Por ahora, solo extraer información básica del archivo
+        # En futura implementación, usar FFmpeg para extraer frames
+        return f"Video recibido: {Path(file_path).name}"
+    except Exception as e:
+        logger.error(f"Error procesando video: {e}")
+        return ""
 
 # System prompt del AGI — CEO II | Inteligencia Infinita
 SYSTEM_PROMPT = """# SYSTEM PROMPT — AGI | CEO II | INTELIGENCIA INFINITA
@@ -628,6 +692,43 @@ class MemoriaSQLite:
         
         conn.close()
         return agentes
+    
+    def registrar_idea_vision_ceo(self, titulo: str, descripcion: str, score: int, 
+                                   categoria: str, analisis: str, proximo_paso: str) -> int:
+        """
+        Registra idea estructurada en vision_ceo.md y en SQLite simultáneamente.
+        """
+        from datetime import datetime
+        fecha = datetime.now().strftime("%Y-%m-%d %H:%M")
+        
+        entrada = f"""
+## {fecha} — {titulo}
+**Score:** {score}/100
+**Categoría:** {categoria}
+**Estado:** registrada
+
+**Descripción:**
+{descripcion}
+
+**Análisis AGI:**
+{analisis}
+
+**Próximo paso:**
+{proximo_paso}
+
+**Brief para Colmena:** pendiente
+
+---
+"""
+        # Guardar en vision_ceo.md
+        vision_ceo_path = "vision_ceo.md"
+        with open(vision_ceo_path, "a", encoding="utf-8") as f:
+            f.write(entrada)
+        
+        logger.info(f"Idea registrada en vision_ceo.md: {titulo}")
+        
+        # Guardar en SQLite también
+        return self.guardar_idea(titulo, descripcion, categoria, score, analisis)
 
 
 class ClasificadorIntencion:
@@ -887,6 +988,79 @@ def set_webhook():
     except Exception as e:
         logger.error(f"Error configurando webhook: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/reporte_agente', methods=['POST'])
+def recibir_reporte_agente():
+    """
+    Endpoint que reciben los agentes de la Colmena para reportar métricas.
+    AGI centraliza todo acá.
+    """
+    try:
+        data = request.json
+        
+        # Validar estructura
+        required = ['agente', 'division', 'tipo', 'datos']
+        if not all(k in data for k in required):
+            return jsonify({"error": "estructura inválida"}), 400
+        
+        # Guardar en SQLite
+        conn = sqlite3.connect(memoria.db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO metricas (categoria, nombre, valor, unidad, fuente)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            data['division'],
+            data['tipo'],
+            data['datos'].get('valor'),
+            data['datos'].get('unidad', ''),
+            data['agente']
+        ))
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"Reporte recibido de {data['agente']}: {data['tipo']}")
+        
+        # Si es alerta crítica, notificar a Sergio via Telegram inmediatamente
+        if data.get('severidad') == 'critica':
+            mensaje = f"🔴 URGENTE: {data['agente']} reporta {data['tipo']}: {data['datos']}"
+            if USER_TELEGRAM_ID:
+                enviar_mensaje_telegram(USER_TELEGRAM_ID, mensaje)
+        
+        return jsonify({"status": "ok"}), 200
+        
+    except Exception as e:
+        logger.error(f"Error recibiendo reporte de agente: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/estado_sistema', methods=['GET'])
+def estado_sistema():
+    """
+    AGI expone el estado del sistema para que los agentes lo consulten.
+    """
+    try:
+        conn = sqlite3.connect(memoria.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM agentes")
+        agentes = cursor.fetchall()
+        
+        cursor.execute("SELECT * FROM alertas WHERE estado='activa'")
+        alertas = cursor.fetchall()
+        
+        conn.close()
+        
+        return jsonify({
+            "agentes": [dict(zip(['id', 'nombre', 'division', 'score_reputacion', 'modelo_asignado', 'estado', 'ultima_tarea', 'ultima_actualizacion'], a)) for a in agentes],
+            "alertas": [dict(zip(['id', 'fecha', 'tipo', 'severidad', 'descripcion', 'estado', 'resuelta_en'], a)) for a in alertas],
+            "timestamp": datetime.now().isoformat()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error obteniendo estado del sistema: {e}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     logger.info("Iniciando AGI Telegram Bot con Claude API...")
