@@ -219,6 +219,169 @@ class MemoriaSQLite:
         logger.info(f"Mensaje {mensaje_id} marcado como guardado en vision_agi.md")
 
 
+class AnalizadorPrimerasPalabras:
+    """Analiza las primeras palabras de un mensaje para determinar routing."""
+    
+    def __init__(self):
+        self.mapeo_palabras = self._cargar_mapeo_palabras()
+        logger.info("Analizador de primeras palabras inicializado")
+    
+    def _cargar_mapeo_palabras(self) -> Dict[str, Dict]:
+        """Carga mapeo de palabras clave a agentes/funciones."""
+        return {
+            # Arquitecto (Cascade)
+            "arquitecto": {
+                "palabras": ["arquitecto", "cascade", "modificar", "crear agente", "estructura", "código"],
+                "agente": "arquitecto",
+                "prioridad": 1,
+                "accion": "orden_arquitecto"
+            },
+            "crear": {
+                "palabras": ["crear", "nuevo", "agregar", "implementar"],
+                "agente": "arquitecto",
+                "prioridad": 2,
+                "accion": "crear_agente"
+            },
+            "modificar": {
+                "palabras": ["modificar", "cambiar", "actualizar", "editar"],
+                "agente": "arquitecto",
+                "prioridad": 2,
+                "accion": "modificar_sistema"
+            },
+            
+            # Colmena
+            "colmena": {
+                "palabras": ["colmena", "agentes", "ejecutar", "tarea", "proceso"],
+                "agente": "colmena",
+                "prioridad": 1,
+                "accion": "comunicacion_colmena"
+            },
+            "ejecutar": {
+                "palabras": ["ejecutar", "correr", "iniciar", "lanzar"],
+                "agente": "colmena",
+                "prioridad": 2,
+                "accion": "ejecutar_tarea"
+            },
+            
+            # Búsqueda Web
+            "buscar": {
+                "palabras": ["buscar", "investigar", "encontrar", "google", "web"],
+                "agente": "busqueda",
+                "prioridad": 1,
+                "accion": "busqueda_web"
+            },
+            
+            # Ideas
+            "idea": {
+                "palabras": ["idea", "propuesta", "proyecto", "innovación"],
+                "agente": "agi",
+                "prioridad": 1,
+                "accion": "procesar_idea"
+            },
+            
+            # Estado/Reporte
+            "estado": {
+                "palabras": ["estado", "reporte", "situación", "status"],
+                "agente": "agi",
+                "prioridad": 1,
+                "accion": "reportar_estado"
+            },
+            "reporte": {
+                "palabras": ["reporte", "informe", "resumen"],
+                "agente": "agi",
+                "prioridad": 1,
+                "accion": "reportar_estado"
+            },
+            
+            # Urgencia
+            "urgente": {
+                "palabras": ["urgente", "emergencia", "crítico", "ahora"],
+                "agente": "agi",
+                "prioridad": 0,  # Máxima prioridad
+                "accion": "procesar_urgencia"
+            },
+            
+            # Dashboard
+            "dashboard": {
+                "palabras": ["dashboard", "panel", "visualización", "gráfico"],
+                "agente": "dashboard",
+                "prioridad": 2,
+                "accion": "generar_dashboard"
+            },
+            
+            # Organización
+            "organizar": {
+                "palabras": ["organizar", "ordenar", "clasificar", "estructura"],
+                "agente": "organizador",
+                "prioridad": 2,
+                "accion": "organizar_sistema"
+            },
+            
+            # Alertas
+            "alerta": {
+                "palabras": ["alerta", "notificación", "aviso", "warning"],
+                "agente": "alertas",
+                "prioridad": 1,
+                "accion": "generar_alerta"
+            },
+            
+            # Cotidiano (default)
+            "default": {
+                "palabras": [],
+                "agente": "agi",
+                "prioridad": 3,
+                "accion": "responder_cotidiano"
+            }
+        }
+    
+    def analizar_primeras_palabras(self, contenido: str, limite_palabras: int = 3) -> Dict:
+        """
+        Analiza las primeras palabras del mensaje.
+        
+        Args:
+            contenido: Contenido del mensaje
+            limite_palabras: Número de palabras a analizar
+            
+        Returns:
+            Dict con información del routing
+        """
+        contenido_lower = contenido.lower()
+        palabras = contenido_lower.split()[:limite_palabras]
+        palabras_clave = " ".join(palabras)
+        
+        mejor_match = None
+        mejor_score = 0
+        
+        for categoria, config in self.mapeo_palabras.items():
+            if categoria == "default":
+                continue
+            
+            score = 0
+            for palabra in config["palabras"]:
+                if palabra in palabras_clave:
+                    score += 1
+                # Bonus si está en las primeras 2 palabras
+                if any(palabra in p for p in palabras[:2]):
+                    score += 2
+            
+            if score > mejor_score:
+                mejor_score = score
+                mejor_match = config
+        
+        # Si no hay match, usar default
+        if not mejor_match or mejor_score == 0:
+            mejor_match = self.mapeo_palabras["default"]
+        
+        return {
+            "categoria": mejor_match.get("agente", "agi"),
+            "accion": mejor_match.get("accion", "responder_cotidiano"),
+            "prioridad": mejor_match.get("prioridad", 3),
+            "palabras_analizadas": palabras,
+            "score": mejor_score,
+            "confianza": min(1.0, mejor_score / 5.0)  # Normalizar a 0-1
+        }
+
+
 class AGIWhatsApp:
     """Agente AGI (Artificial General Intelligence) para WhatsApp."""
     
@@ -227,6 +390,7 @@ class AGIWhatsApp:
         self.contexto_maestro = self._cargar_contexto_maestro()
         self.whatsapp_token = os.getenv("WHATSAPP_TOKEN", "2417230442079987|rK3n87av4_-lK67I065Ir2cC7Ug")
         self.user_phone_number = os.getenv("USER_PHONE_NUMBER", "5491140628310")  # Número autorizado
+        self.analizador_palabras = AnalizadorPrimerasPalabras()
         logger.info("AGI WhatsApp inicializado")
         logger.info(f"Número autorizado: {self.user_phone_number}")
     
@@ -262,7 +426,7 @@ class AGIWhatsApp:
                         es_imagen: bool = False, es_video: bool = False, 
                         es_documento: bool = False) -> str:
         """
-        Procesa mensaje de Sergio y genera respuesta.
+        Procesa mensaje de Sergio y genera respuesta usando análisis de primeras palabras.
         
         Args:
             tipo: "texto", "audio", "imagen", "video", "documento", "idea", "reporte", "arquitecto", "colmena"
@@ -301,30 +465,58 @@ class AGIWhatsApp:
                 contenido = f"[DOCUMENTO] {analisis_doc}"
                 logger.info(f"Documento procesado: {analisis_doc[:50]}...")
             
-            # Analizar tipo de mensaje
-            if "arquitecto:" in contenido.lower() or tipo == "arquitecto":
+            # CRUCE DE PRIMERAS PALABRAS CON AGI
+            analisis_palabras = self.analizador_palabras.analizar_primeras_palabras(contenido)
+            logger.info(f"Análisis de palabras: {analisis_palabras}")
+            
+            # Routing basado en análisis de palabras
+            accion = analisis_palabras["accion"]
+            categoria = analisis_palabras["categoria"]
+            confianza = analisis_palabras["confianza"]
+            
+            # Ejecutar acción correspondiente
+            if accion == "orden_arquitecto":
                 respuesta = self._procesar_orden_arquitecto(contenido)
-            elif "colmena:" in contenido.lower() or tipo == "colmena":
+            elif accion == "crear_agente":
+                respuesta = self._procesar_orden_arquitecto(contenido)  # Reutilizar para crear
+            elif accion == "modificar_sistema":
+                respuesta = self._procesar_orden_arquitecto(contenido)  # Reutilizar para modificar
+            elif accion == "comunicacion_colmena":
                 respuesta = self._procesar_comunicacion_colmena(contenido)
-            elif "buscar:" in contenido.lower() or tipo == "busqueda":
+            elif accion == "ejecutar_tarea":
+                respuesta = self._procesar_comunicacion_colmena(contenido)  # Reutilizar para ejecutar
+            elif accion == "busqueda_web":
                 respuesta = self._buscar_web(contenido)
-            elif "idea" in contenido.lower() or tipo == "idea":
+            elif accion == "procesar_idea":
                 respuesta = self._procesar_idea(contenido)
-            elif "estado" in contenido.lower() or "reporte" in contenido.lower():
+            elif accion == "reportar_estado":
                 respuesta = self._reportar_estado()
-            elif "urgente" in contenido.lower():
+            elif accion == "procesar_urgencia":
                 respuesta = self._procesar_urgencia(contenido)
+            elif accion == "generar_dashboard":
+                respuesta = f"Dashboard: Generando visualización para {categoria}. Enviando al agente de dashboard..."
+            elif accion == "organizar_sistema":
+                respuesta = f"Organizador: Organizando sistema según solicitud. Enviando al agente organizador..."
+            elif accion == "generar_alerta":
+                respuesta = f"Alertas: Generando alerta para {categoria}. Enviando al agente de alertas..."
             else:
                 respuesta = self._responder_cotidiano(contenido)
             
-            # Guardar en memoria
+            # Agregar metadata de routing a la respuesta si la confianza es alta
+            if confianza > 0.6:
+                respuesta = f"[{categoria.upper()}] {respuesta}"
+            
+            # Guardar en memoria con metadata de routing
             mensaje = MensajeMemoria(
                 timestamp=timestamp,
                 tipo=tipo,
                 contenido=contenido,
                 respuesta=respuesta
             )
-            self.memoria.guardar_mensaje(mensaje)
+            mensaje_id = self.memoria.guardar_mensaje(mensaje)
+            
+            # Guardar análisis de palabras en log
+            logger.info(f"Routing: {categoria} -> {accion} (confianza: {confianza:.2f})")
             
             return respuesta
             
