@@ -303,17 +303,110 @@ class MensajeMemoria:
 
 
 class MemoriaSQLite:
-    """Memoria persistente SQLite para AGI."""
+    """Memoria persistente SQLite para AGI con esquema completo."""
     
     def __init__(self, db_path: str = "agi_memoria_telegram.db"):
         self.db_path = db_path
         self._inicializar_db()
     
     def _inicializar_db(self):
-        """Inicializa base de datos SQLite."""
+        """Inicializa base de datos SQLite con esquema completo."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
+        # 1. IDEAS DE SERGIO
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS ideas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                titulo TEXT NOT NULL,
+                descripcion TEXT,
+                categoria TEXT,
+                score INTEGER,
+                estado TEXT DEFAULT 'registrada',
+                brief_generado TEXT,
+                notas TEXT
+            )
+        """)
+        
+        # 2. DECISIONES TOMADAS
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS decisiones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                descripcion TEXT NOT NULL,
+                tipo TEXT,
+                impacto TEXT,
+                ejecutada_por TEXT,
+                resultado TEXT
+            )
+        """)
+        
+        # 3. ESTADO DE AGENTES
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS agentes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT UNIQUE NOT NULL,
+                division TEXT,
+                score_reputacion INTEGER DEFAULT 75,
+                modelo_asignado TEXT,
+                estado TEXT DEFAULT 'operativo',
+                ultima_tarea TEXT,
+                ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # 4. MÉTRICAS DE LA EMPRESA
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS metricas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                categoria TEXT,
+                nombre TEXT NOT NULL,
+                valor REAL,
+                unidad TEXT,
+                fuente TEXT
+            )
+        """)
+        
+        # 5. ALERTAS Y RIESGOS
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS alertas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                tipo TEXT,
+                severidad TEXT,
+                descripcion TEXT NOT NULL,
+                estado TEXT DEFAULT 'activa',
+                resuelta_en TIMESTAMP
+            )
+        """)
+        
+        # 6. COMUNICACIONES CON LA COLMENA
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS comunicaciones_colmena (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                tipo TEXT,
+                destino TEXT,
+                mensaje TEXT NOT NULL,
+                estado TEXT DEFAULT 'pendiente_aprobacion',
+                aprobado_en TIMESTAMP
+            )
+        """)
+        
+        # 7. HISTORIAL DE CONVERSACIÓN
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS conversaciones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                rol TEXT,
+                contenido TEXT NOT NULL,
+                tipo_mensaje TEXT
+            )
+        """)
+        
+        # 8. MENSAJES (mantener compatibilidad con código existente)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS mensajes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -328,10 +421,10 @@ class MemoriaSQLite:
         
         conn.commit()
         conn.close()
-        logger.info("Base de datos SQLite inicializada")
+        logger.info("Base de datos SQLite inicializada con esquema completo")
     
     def guardar_mensaje(self, mensaje: MensajeMemoria) -> int:
-        """Guarda mensaje en base de datos."""
+        """Guarda mensaje en base de datos (compatibilidad)."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
@@ -354,8 +447,76 @@ class MemoriaSQLite:
         logger.info(f"Mensaje guardado con ID {mensaje_id}")
         return mensaje_id
     
+    def guardar_idea(self, titulo: str, descripcion: str, categoria: str, score: int, notas: str = "") -> int:
+        """Guarda idea de Sergio en base de datos."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO ideas (titulo, descripcion, categoria, score, notas)
+            VALUES (?, ?, ?, ?, ?)
+        """, (titulo, descripcion, categoria, score, notas))
+        
+        idea_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"Idea guardada con ID {idea_id}")
+        return idea_id
+    
+    def guardar_decision(self, descripcion: str, tipo: str, impacto: str, ejecutada_por: str, resultado: str = "") -> int:
+        """Guarda decisión tomada en base de datos."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO decisiones (descripcion, tipo, impacto, ejecutada_por, resultado)
+            VALUES (?, ?, ?, ?, ?)
+        """, (descripcion, tipo, impacto, ejecutada_por, resultado))
+        
+        decision_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"Decisión guardada con ID {decision_id}")
+        return decision_id
+    
+    def guardar_metrica(self, categoria: str, nombre: str, valor: float, unidad: str, fuente: str) -> int:
+        """Guarda métrica de la empresa en base de datos."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO metricas (categoria, nombre, valor, unidad, fuente)
+            VALUES (?, ?, ?, ?, ?)
+        """, (categoria, nombre, valor, unidad, fuente))
+        
+        metrica_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"Métrica guardada con ID {metrica_id}")
+        return metrica_id
+    
+    def guardar_alerta(self, tipo: str, severidad: str, descripcion: str) -> int:
+        """Guarda alerta en base de datos."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO alertas (tipo, severidad, descripcion)
+            VALUES (?, ?, ?)
+        """, (tipo, severidad, descripcion))
+        
+        alerta_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"Alerta guardada con ID {alerta_id}")
+        return alerta_id
+    
     def obtener_mensajes(self, limite: int = 10) -> List[Dict]:
-        """Obtiene últimos mensajes."""
+        """Obtiene últimos mensajes (compatibilidad)."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
@@ -380,112 +541,205 @@ class MemoriaSQLite:
         
         conn.close()
         return mensajes
+    
+    def obtener_metricas(self, categoria: str = None, limite: int = 10) -> List[Dict]:
+        """Obtiene últimas métricas."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        if categoria:
+            cursor.execute("""
+                SELECT id, fecha, categoria, nombre, valor, unidad, fuente
+                FROM metricas
+                WHERE categoria = ?
+                ORDER BY fecha DESC
+                LIMIT ?
+            """, (categoria, limite))
+        else:
+            cursor.execute("""
+                SELECT id, fecha, categoria, nombre, valor, unidad, fuente
+                FROM metricas
+                ORDER BY fecha DESC
+                LIMIT ?
+            """, (limite,))
+        
+        metricas = []
+        for row in cursor.fetchall():
+            metricas.append({
+                "id": row[0],
+                "fecha": row[1],
+                "categoria": row[2],
+                "nombre": row[3],
+                "valor": row[4],
+                "unidad": row[5],
+                "fuente": row[6]
+            })
+        
+        conn.close()
+        return metricas
+    
+    def obtener_alertas_activas(self, limite: int = 10) -> List[Dict]:
+        """Obtiene alertas activas."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, fecha, tipo, severidad, descripcion, estado
+            FROM alertas
+            WHERE estado = 'activa'
+            ORDER BY fecha DESC
+            LIMIT ?
+        """, (limite,))
+        
+        alertas = []
+        for row in cursor.fetchall():
+            alertas.append({
+                "id": row[0],
+                "fecha": row[1],
+                "tipo": row[2],
+                "severidad": row[3],
+                "descripcion": row[4],
+                "estado": row[5]
+            })
+        
+        conn.close()
+        return alertas
+    
+    def obtener_agentes_cuarentena(self) -> List[Dict]:
+        """Obtiene agentes en cuarentena."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, nombre, division, estado, score_reputacion
+            FROM agentes
+            WHERE estado = 'cuarentena'
+        """)
+        
+        agentes = []
+        for row in cursor.fetchall():
+            agentes.append({
+                "id": row[0],
+                "nombre": row[1],
+                "division": row[2],
+                "estado": row[3],
+                "score_reputacion": row[4]
+            })
+        
+        conn.close()
+        return agentes
 
 
-class AnalizadorPrimerasPalabras:
-    """Analiza las primeras palabras de un mensaje para determinar routing."""
+class ClasificadorIntencion:
+    """Clasifica mensajes de Sergio según intención para routing inteligente."""
     
     def __init__(self):
-        self.mapeo_palabras = self._cargar_mapeo_palabras()
-        logger.info("Analizador de primeras palabras inicializado")
+        self.patrones = self._cargar_patrones()
+        logger.info("Clasificador de intención inicializado")
     
-    def _cargar_mapeo_palabras(self) -> Dict[str, Dict]:
-        """Carga mapeo de palabras clave a agentes/funciones."""
+    def _cargar_patrones(self) -> Dict[str, List[str]]:
+        """Carga patrones de clasificación de intención."""
         return {
-            "arquitecto": {
-                "palabras": ["arquitecto", "cascade", "modificar", "crear agente", "estructura", "código"],
-                "agente": "arquitecto",
-                "prioridad": 1,
-                "accion": "orden_arquitecto"
-            },
-            "crear": {
-                "palabras": ["crear", "nuevo", "agregar", "implementar"],
-                "agente": "arquitecto",
-                "prioridad": 2,
-                "accion": "crear_agente"
-            },
-            "colmena": {
-                "palabras": ["colmena", "agentes", "ejecutar", "tarea", "proceso"],
-                "agente": "colmena",
-                "prioridad": 1,
-                "accion": "comunicacion_colmena"
-            },
-            "buscar": {
-                "palabras": ["buscar", "investigar", "encontrar", "google", "web"],
-                "agente": "busqueda",
-                "prioridad": 1,
-                "accion": "busqueda_web"
-            },
-            "idea": {
-                "palabras": ["idea", "propuesta", "proyecto", "innovación"],
-                "agente": "agi",
-                "prioridad": 1,
-                "accion": "procesar_idea"
-            },
-            "estado": {
-                "palabras": ["estado", "reporte", "situación", "status"],
-                "agente": "agi",
-                "prioridad": 1,
-                "accion": "reportar_estado"
-            },
-            "urgente": {
-                "palabras": ["urgente", "emergencia", "crítico", "ahora"],
-                "agente": "agi",
-                "prioridad": 0,
-                "accion": "procesar_urgencia"
-            },
-            "default": {
-                "palabras": [],
-                "agente": "agi",
-                "prioridad": 3,
-                "accion": "responder_cotidiano"
-            }
+            "idea": ["idea", "qué te parece", "pensé en", "y si", "podríamos", "quiero crear", "propuesta"],
+            "estado": ["estado", "cómo vamos", "reporte", "métricas", "resumen", "dashboard", "qué pasó"],
+            "orden_arquitecto": ["cascade", "arquitecto", "implementá", "creá", "modificá", "arreglá", "deployá"],
+            "orden_colmena": ["colmena", "avisá", "mandá a todos", "comunicá", "informá"],
+            "alerta": ["urgente", "problema", "error", "cayó", "fallo", "riesgo", "drawdown"],
+            "trading": ["trade", "operación", "us30", "posición", "entrada", "salida", "señal"],
+            "consulta": ["qué es", "cómo", "explicame", "cuándo", "por qué", "diferencia"],
         }
     
-    def analizar_primeras_palabras(self, contenido: str, limite_palabras: int = 3) -> Dict:
-        """Analiza las primeras palabras del mensaje."""
-        contenido_lower = contenido.lower()
-        palabras = contenido_lower.split()[:limite_palabras]
-        palabras_clave = " ".join(palabras)
+    def clasificar_mensaje(self, texto: str) -> Dict:
+        """
+        Clasifica el mensaje de Sergio antes de enviarlo a Claude.
+        Retorna: { tipo, contexto_adicional }
+        """
+        texto_lower = texto.lower().strip()
         
-        mejor_match = None
-        mejor_score = 0
+        for tipo, keywords in self.patrones.items():
+            if any(kw in texto_lower for kw in keywords):
+                return {"tipo": tipo}
         
-        for categoria, config in self.mapeo_palabras.items():
-            if categoria == "default":
-                continue
-            
-            score = 0
-            for palabra in config["palabras"]:
-                if palabra in palabras_clave:
-                    score += 1
-                if any(palabra in p for p in palabras[:2]):
-                    score += 2
-            
-            if score > mejor_score:
-                mejor_score = score
-                mejor_match = config
+        return {"tipo": "general"}
+
+
+def construir_contexto_dinamico(db_conn, tipo_mensaje: str) -> str:
+    """
+    Inyecta contexto relevante según el tipo de mensaje detectado.
+    """
+    contexto = []
+    
+    if tipo_mensaje == "estado":
+        # Traer últimas métricas
+        cursor = db_conn.cursor()
+        cursor.execute(
+            "SELECT nombre, valor, unidad FROM metricas ORDER BY fecha DESC LIMIT 10"
+        )
+        metricas = cursor.fetchall()
         
-        if not mejor_match or mejor_score == 0:
-            mejor_match = self.mapeo_palabras["default"]
+        cursor.execute(
+            "SELECT descripcion, severidad FROM alertas WHERE estado='activa' LIMIT 5"
+        )
+        alertas = cursor.fetchall()
         
-        return {
-            "categoria": mejor_match.get("agente", "agi"),
-            "accion": mejor_match.get("accion", "responder_cotidiano"),
-            "prioridad": mejor_match.get("prioridad", 3),
-            "palabras_analizadas": palabras,
-            "score": mejor_score,
-            "confianza": min(1.0, mejor_score / 5.0)
-        }
+        cursor.execute(
+            "SELECT nombre FROM agentes WHERE estado='cuarentena'"
+        )
+        agentes_cuarentena = cursor.fetchall()
+        
+        if metricas:
+            contexto.append(f"MÉTRICAS ACTUALES: {metricas}")
+        if alertas:
+            contexto.append(f"ALERTAS ACTIVAS: {alertas}")
+        if agentes_cuarentena:
+            contexto.append(f"AGENTES EN CUARENTENA: {agentes_cuarentena}")
+    
+    elif tipo_mensaje == "idea":
+        # Traer ideas pendientes para contexto
+        cursor = db_conn.cursor()
+        cursor.execute(
+            "SELECT titulo, score, estado FROM ideas WHERE estado != 'completada' ORDER BY fecha DESC LIMIT 5"
+        )
+        ideas = cursor.fetchall()
+        if ideas:
+            contexto.append(f"IDEAS EN CURSO: {ideas}")
+    
+    elif tipo_mensaje == "trading":
+        # Traer métricas de trading
+        cursor = db_conn.cursor()
+        cursor.execute(
+            "SELECT nombre, valor, unidad FROM metricas WHERE categoria='trading' ORDER BY fecha DESC LIMIT 5"
+        )
+        trading = cursor.fetchall()
+        if trading:
+            contexto.append(f"ESTADO TRADING: {trading}")
+    
+    return "\n".join(contexto) if contexto else ""
+
+
+def construir_mensaje_sistema(db_conn, tipo_mensaje: str) -> str:
+    """
+    Combina el system prompt base con el contexto dinámico actual.
+    """
+    # System prompt base (SYSTEM_PROMPT ya está definido)
+    system_base = SYSTEM_PROMPT
+    
+    # Contexto dinámico según tipo de mensaje
+    contexto_dinamico = construir_contexto_dinamico(db_conn, tipo_mensaje)
+    
+    if contexto_dinamico:
+        return f"{system_base}\n\n---\n## ESTADO ACTUAL DEL SISTEMA\n{contexto_dinamico}"
+    
+    return system_base
 
 
 # Claude API client
 anthropic_client = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 memoria = MemoriaSQLite()
-analizador_palabras = AnalizadorPrimerasPalabras()
+clasificador_intencion = ClasificadorIntencion()
 
-def procesar_mensaje_con_claude(message_text):
-    """Procesa mensaje usando Claude API para inteligencia real."""
+def procesar_mensaje_con_claude(message_text, tipo_mensaje: str = "general"):
+    """Procesa mensaje usando Claude API para inteligencia real con contexto dinámico."""
     try:
         if not anthropic_client:
             logger.warning("Claude API no configurada, usando respuesta simulada")
@@ -493,10 +747,15 @@ def procesar_mensaje_con_claude(message_text):
         
         logger.info("Enviando mensaje a Claude API...")
         
+        # Construir system prompt con contexto dinámico
+        conn = sqlite3.connect(memoria.db_path)
+        system_prompt_dinamico = construir_mensaje_sistema(conn, tipo_mensaje)
+        conn.close()
+        
         response = anthropic_client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=1024,
-            system=SYSTEM_PROMPT,
+            system=system_prompt_dinamico,
             messages=[
                 {"role": "user", "content": message_text}
             ]
@@ -525,23 +784,19 @@ def procesar_mensaje(message):
         
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # CRUCE DE PRIMERAS PALABRAS CON AGI
-        analisis_palabras = analizador_palabras.analizar_primeras_palabras(text)
-        logger.info(f"Análisis de palabras: {analisis_palabras}")
+        # CLASIFICACIÓN DE INTENCIÓN
+        clasificacion = clasificador_intencion.clasificar_mensaje(text)
+        tipo_mensaje = clasificacion["tipo"]
+        logger.info(f"Clasificación de intención: {tipo_mensaje}")
         
-        # Routing basado en análisis de palabras
-        accion = analisis_palabras["accion"]
-        categoria = analisis_palabras["categoria"]
-        confianza = analisis_palabras["confianza"]
+        # Procesar mensaje con Claude API para inteligencia real con contexto dinámico
+        respuesta = procesar_mensaje_con_claude(text, tipo_mensaje)
         
-        # Procesar mensaje con Claude API para inteligencia real
-        respuesta = procesar_mensaje_con_claude(text)
+        # Agregar metadata de tipo a la respuesta
+        if tipo_mensaje != "general":
+            respuesta = f"[{tipo_mensaje.upper()}] {respuesta}"
         
-        # Agregar metadata de routing a la respuesta si la confianza es alta
-        if confianza > 0.6:
-            respuesta = f"[{categoria.upper()}] {respuesta}"
-        
-        # Guardar en memoria con metadata de routing
+        # Guardar en memoria
         mensaje_memoria = MensajeMemoria(
             timestamp=timestamp,
             tipo="texto",
@@ -551,7 +806,7 @@ def procesar_mensaje(message):
         mensaje_id = memoria.guardar_mensaje(mensaje_memoria)
         
         logger.info(f"Mensaje guardado en memoria con ID {mensaje_id}")
-        logger.info(f"Routing: {categoria} -> {accion} (confianza: {confianza:.2f})")
+        logger.info(f"Tipo de mensaje: {tipo_mensaje}")
         
         return respuesta
         
