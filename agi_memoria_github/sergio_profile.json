@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-01T22:46:26.321768",
+    "fecha": "2026-05-01T22:50:20.772366",
     "tipo": "conversacion_estrategica",
-    "contenido": "estamos desde telegram wed se volvio a cortar el msj"
+    "contenido": "manda el sistem prompt divido para que no se corte y despues solucionamos lo de la memoria quiero que guardes esta conversacion igualmente asi no se te borra del contexto  una vez que tengas memoria p"
   },
-  "total_interacciones": 24
+  "total_interacciones": 25
 }
