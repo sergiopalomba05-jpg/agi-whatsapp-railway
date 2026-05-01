@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-01T21:12:15.229165",
+    "fecha": "2026-05-01T21:12:27.005272",
     "tipo": "conversacion_estrategica",
-    "contenido": "2026-05-01 21:07:18,171 - agi_memory.intent_classifier - INFO - [INTENT CLASSIFIER] Mensaje clasificado como: conversacion_estrategica (confianza: 0.30)\n2026-05-01 21:07:18,171 - __main__ - INFO - Cla"
+    "contenido": "Conversación guardada en historial SQLite\n2026-05-01 21:08:54,532 - __main__ - INFO - Tipo de mensaje: conversacion_estrategica\n2026-05-01 21:08:54,657 - httpx - INFO - HTTP Request: GET https://fcmer"
   },
-  "total_interacciones": 8
+  "total_interacciones": 9
 }
