@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-01T23:06:00.773533",
-    "tipo": "rechazo",
-    "contenido": "no me mandaste la parte 4 me pediste las 3 partes para armarla y no me la mandaste que pasa? si ya arrancamos asi el primer dia de trabajo te voy a tener que cambiar por otra inteligencia"
+    "fecha": "2026-05-01T23:06:56.145813",
+    "tipo": "conversacion_estrategica",
+    "contenido": "si solo esa lista mandaste eso solo es la parte 4?"
   },
-  "total_interacciones": 41
+  "total_interacciones": 42
 }
