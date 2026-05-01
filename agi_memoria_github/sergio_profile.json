@@ -1,1 +1,8 @@
-{}
+{
+  "ultima_interaccion": {
+    "fecha": "2026-05-01T20:49:39.029357",
+    "tipo": "conversacion_estrategica",
+    "contenido": "agi estas ?"
+  },
+  "total_interacciones": 1
+}
