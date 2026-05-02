@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T00:17:04.807623",
+    "fecha": "2026-05-02T00:17:15.732331",
     "tipo": "conversacion_estrategica",
-    "contenido": "mas asi es que ya estoy intentando hace muchos dias lo de tu la memoria con cascade  es muy inutil me retrasa mucho es muy agotador este flujo de trabajo paso horas y horas corrigiiendo errores de cas"
+    "contenido": "4. Todo código debe ejecutar sin errores antes de reportar completo.\n5. Todo debe estar en GitHub antes de reportar completo. Código local que no está en GitHub no existe.\n6. Si algo existía y se borr"
   },
-  "total_interacciones": 84
+  "total_interacciones": 85
 }
