@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T02:30:23.798673",
-    "tipo": "conversacion_estrategica",
-    "contenido": ""
+    "fecha": "2026-05-02T02:31:33.199205",
+    "tipo": "rechazo",
+    "contenido": "no podes recibir audio?"
   },
-  "total_interacciones": 128
+  "total_interacciones": 129
 }
