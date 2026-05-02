@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T00:14:28.016564",
-    "tipo": "conversacion_estrategica",
-    "contenido": "te envie el archivo ya no lo pes abrir?"
+    "fecha": "2026-05-02T00:14:36.606528",
+    "tipo": "rechazo",
+    "contenido": "no puedo x ellimite de caracteres"
   },
-  "total_interacciones": 77
+  "total_interacciones": 78
 }
