@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T00:23:35.168599",
-    "tipo": "rechazo",
-    "contenido": "no no esta bien este medio para un documento tan largo donde puedo subir el bloc de notas para que lo veas?"
+    "fecha": "2026-05-02T00:23:52.170521",
+    "tipo": "conversacion_estrategica",
+    "contenido": "te estoy haciendo una pregunta"
   },
-  "total_interacciones": 100
+  "total_interacciones": 101
 }
