@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T03:52:51.274725",
-    "tipo": "rechazo",
-    "contenido": "no podes armar vos el bierf? en este momento no tengo accesoa  destock"
+    "fecha": "2026-05-02T03:54:01.377180",
+    "tipo": "conversacion_estrategica",
+    "contenido": "si"
   },
-  "total_interacciones": 137
+  "total_interacciones": 138
 }
