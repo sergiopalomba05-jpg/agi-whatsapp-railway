@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T00:15:54.802258",
+    "fecha": "2026-05-02T00:16:17.330618",
     "tipo": "conversacion_estrategica",
-    "contenido": "Lo que veo en mi system prompt ahora mismo:**\n\nPERFIL SERGIO: {\"ultima_interaccion\": {\"fecha\": \"2026-05-01T21:39:58\"...\nVISION CEO: # Vision Ceo (vacío)\nDECISIONES RECIENTES: # Banco Decisiones (vacío"
+    "contenido": "ERROR: 'HeartbeatMonitor' object has no attribute 'actualizar_heartbeat'\n\nLocalizar clase `HeartbeatMonitor`. Verificar el nombre real del método y corregir la llamada en `agi_telegram.py`. Si el méto"
   },
-  "total_interacciones": 80
+  "total_interacciones": 81
 }
