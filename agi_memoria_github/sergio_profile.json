@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T07:20:42.087767",
+    "fecha": "2026-05-02T07:26:21.517471",
     "tipo": "conversacion_estrategica",
-    "contenido": "groq"
+    "contenido": "agi estas=?"
   },
-  "total_interacciones": 159
+  "total_interacciones": 160
 }
