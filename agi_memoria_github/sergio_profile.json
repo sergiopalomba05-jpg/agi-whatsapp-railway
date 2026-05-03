@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-02T23:25:40.891068",
-    "tipo": "rechazo",
-    "contenido": "No pude transcribir el audio"
+    "fecha": "2026-05-03T01:26:50.215577",
+    "tipo": "conversacion_estrategica",
+    "contenido": "ya podes recibir y enviar audios?"
   },
-  "total_interacciones": 188
+  "total_interacciones": 189
 }
