@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-05T18:13:06.627123",
-    "tipo": "conversacion_estrategica",
-    "contenido": "se corto el mensaje"
+    "fecha": "2026-05-05T18:13:19.983829",
+    "tipo": "rechazo",
+    "contenido": "No pude transcribir el audio"
   },
-  "total_interacciones": 204
+  "total_interacciones": 205
 }
