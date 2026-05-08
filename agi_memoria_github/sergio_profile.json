@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-08T05:08:36.839955",
+    "fecha": "2026-05-08T05:10:01.539288",
     "tipo": "conversacion_estrategica",
-    "contenido": "ya estas conectada al bus de la empresa?"
+    "contenido": "dame el estado actual agentes activos creadoa y todas las especificaciones de como estamos en la acualidad"
   },
-  "total_interacciones": 213
+  "total_interacciones": 214
 }
