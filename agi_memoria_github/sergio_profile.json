@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-08T05:07:09.936962",
-    "tipo": "rechazo",
-    "contenido": "No pude transcribir el audio"
+    "fecha": "2026-05-08T05:08:36.839955",
+    "tipo": "conversacion_estrategica",
+    "contenido": "ya estas conectada al bus de la empresa?"
   },
-  "total_interacciones": 212
+  "total_interacciones": 213
 }
