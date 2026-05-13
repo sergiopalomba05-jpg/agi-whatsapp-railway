@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T15:39:35.651780",
+    "fecha": "2026-05-13T19:23:31.059903",
     "tipo": "conversacion_estrategica",
-    "contenido": "[RESPUESTA POR VOZ AUTOMATICA] Hablame sobre la fábrica de bots, que agentes hay activos y como esta el circuito de la fábrica para empezar a producir bots"
+    "contenido": "[RESPUESTA POR VOZ AUTOMATICA] bueno ají te voy a poner en contexto de lo que hablé ayer con claude vamos a hacer así yo ahora implemente las herramientas de delta order flow herramientas de nivel 2 A"
   },
-  "total_interacciones": 249
+  "total_interacciones": 250
 }
