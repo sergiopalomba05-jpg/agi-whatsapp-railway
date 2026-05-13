@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T14:51:52.346528",
+    "fecha": "2026-05-13T14:53:38.255188",
     "tipo": "conversacion_estrategica",
-    "contenido": "Si, quiero que me diga si es lo mismo que esté en la nube o si es lo mismo que esté en la PC. En la nube capaz que es mejor, ¿no? Corre más rápido y podemos darle órdenes cuando no estoy conectado en "
+    "contenido": "Contestá por audio, no por texto. Cuando yo te mando audio, contestá por audio. Cuando te mando texto, contestá por texto."
   },
-  "total_interacciones": 246
+  "total_interacciones": 247
 }
