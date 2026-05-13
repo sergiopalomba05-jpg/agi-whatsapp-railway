@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T14:34:55.639348",
+    "fecha": "2026-05-13T14:39:56.647852",
     "tipo": "conversacion_estrategica",
-    "contenido": "Ahi podes responder audios? Podes responder audios? Logicamente contestar los audios?"
+    "contenido": "Dame el estado actual de la empresa, cuántos agentes activos hay y a qué agentes estás conectado vos"
   },
-  "total_interacciones": 240
+  "total_interacciones": 241
 }
