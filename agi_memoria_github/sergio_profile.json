@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T14:53:38.255188",
+    "fecha": "2026-05-13T15:30:52.678574",
     "tipo": "conversacion_estrategica",
-    "contenido": "Contestá por audio, no por texto. Cuando yo te mando audio, contestá por audio. Cuando te mando texto, contestá por texto."
+    "contenido": "[RESPUESTA POR VOZ AUTOMATICA] Ajie, decime tu estado actual y tus habilidades y el estado de la empresa. Y cuántos agentes tengo. Y cómo estás conectada al arquitecto."
   },
-  "total_interacciones": 247
+  "total_interacciones": 248
 }
