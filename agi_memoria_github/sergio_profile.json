@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T06:11:58.558470",
+    "fecha": "2026-05-13T06:12:39.381896",
     "tipo": "conversacion_estrategica",
-    "contenido": "Aji, podes escuchar?"
+    "contenido": "Me escuchás, me escuchás, pero no podés contestar en audio, pero sí podés contestar transcribiendo en texto lo que escuchás en el audio que yo te envío."
   },
-  "total_interacciones": 231
+  "total_interacciones": 232
 }
