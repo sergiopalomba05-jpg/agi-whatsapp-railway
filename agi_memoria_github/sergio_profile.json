@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-10T08:37:32.879128",
-    "tipo": "rechazo",
-    "contenido": "No pude transcribir el audio"
+    "fecha": "2026-05-13T04:10:39.381637",
+    "tipo": "conversacion_estrategica",
+    "contenido": "agi estas activa?"
   },
-  "total_interacciones": 221
+  "total_interacciones": 222
 }
