@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T14:39:56.647852",
+    "fecha": "2026-05-13T14:41:01.312834",
     "tipo": "conversacion_estrategica",
-    "contenido": "Dame el estado actual de la empresa, cuántos agentes activos hay y a qué agentes estás conectado vos"
+    "contenido": "¿Por qué no tenés la información actualizada en este momento? Sobre la empresa en este momento, ¿qué te hace falta? Así le digo a Cascade que lo haga ¿Y estás conectada a Cascade? Para poder darle órd"
   },
-  "total_interacciones": 241
+  "total_interacciones": 242
 }
