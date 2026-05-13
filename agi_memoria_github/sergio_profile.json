@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T04:53:05.479815",
-    "tipo": "rechazo",
-    "contenido": "No pude transcribir el audio"
+    "fecha": "2026-05-13T04:53:06.559660",
+    "tipo": "conversacion_estrategica",
+    "contenido": "Error procesando audio"
   },
   "total_interacciones": 226
 }
