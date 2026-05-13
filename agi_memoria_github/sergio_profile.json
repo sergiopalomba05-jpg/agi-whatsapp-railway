@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-13T04:53:06.559660",
+    "fecha": "2026-05-13T04:53:50.280602",
     "tipo": "conversacion_estrategica",
-    "contenido": "Error procesando audio"
+    "contenido": "por que falla la trascripcion de audio?"
   },
-  "total_interacciones": 226
+  "total_interacciones": 227
 }
