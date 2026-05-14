@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-14T02:16:26.830431",
-    "tipo": "aprobacion",
-    "contenido": "Sí, eso es lo que las ideas que te comenté yo hoy, pero ¿qué hizo Cascade realmente entre ayer y hoy?"
+    "fecha": "2026-05-14T12:58:19.452021",
+    "tipo": "conversacion_estrategica",
+    "contenido": "Decime si el arquitecto terminó ayer el agente que estaba haciendo de Bitcoin y decime el nombre del agente"
   },
-  "total_interacciones": 261
+  "total_interacciones": 262
 }
