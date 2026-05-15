@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-15T23:14:00.706365",
-    "tipo": "conversacion_estrategica",
-    "contenido": "Lo que pasa es que no estoy en la PC ahora No te vas a poder conectar a Cascade porque está la computadora apagada Pero vos si tenés memoria persistente, sabés el asistente que sos, sabés..."
+    "fecha": "2026-05-15T23:15:59.158702",
+    "tipo": "rechazo",
+    "contenido": "No, lo que quiero es que usen la memoria, cuando estamos hablando me digas, ya tenemos un agente que analiza el bitcoin creado Y si te acordás decime cuál es el error que tiene el agente"
   },
-  "total_interacciones": 293
+  "total_interacciones": 294
 }
