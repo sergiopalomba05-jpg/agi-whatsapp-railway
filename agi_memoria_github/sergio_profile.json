@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-15T04:46:05.896022",
-    "tipo": "rechazo",
-    "contenido": "No me mandes texto, por favor. Estamos hablando por audios."
+    "fecha": "2026-05-15T12:58:31.187097",
+    "tipo": "conversacion_estrategica",
+    "contenido": "¿Te pudiste conectar con el agente de Bitcoin?"
   },
-  "total_interacciones": 287
+  "total_interacciones": 288
 }
