@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-16T17:30:11.921569",
-    "tipo": "rechazo",
-    "contenido": "No me mientas y no alucines porque yo no veo al arquitecto trabajando, lo tengo corriendo en la pc y como va a tardar tanto, 15 minutos no tarda para arreglar un error"
+    "fecha": "2026-05-16T21:01:19.589930",
+    "tipo": "conversacion_estrategica",
+    "contenido": "Estás conectada al bus y al cerebro PI ya podes ver la empresa en tiempo real podes ver la gente que analiza bitcoin en tiempo real podes ver que métricas está dando en este momento y cual fue la últi"
   },
-  "total_interacciones": 303
+  "total_interacciones": 304
 }
