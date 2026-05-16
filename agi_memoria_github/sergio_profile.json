@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-16T17:28:21.158054",
-    "tipo": "conversacion_estrategica",
-    "contenido": "Si, tengo un problema, el agente está trabado a las 13 y 26 de la tarde o sea hace una hora, son las 14 y 27 ahora vos podes ver cual es el problema y ordenarle al arquitecto que lo arregle en este mo"
+    "fecha": "2026-05-16T17:30:11.921569",
+    "tipo": "rechazo",
+    "contenido": "No me mientas y no alucines porque yo no veo al arquitecto trabajando, lo tengo corriendo en la pc y como va a tardar tanto, 15 minutos no tarda para arreglar un error"
   },
-  "total_interacciones": 302
+  "total_interacciones": 303
 }
