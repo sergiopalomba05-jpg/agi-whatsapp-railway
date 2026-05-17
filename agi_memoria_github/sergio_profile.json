@@ -1,8 +1,8 @@
 {
   "ultima_interaccion": {
-    "fecha": "2026-05-17T01:19:00.263222",
-    "tipo": "urgencia",
-    "contenido": "ahora tenes capacidad y estas conectada a cerebro py?"
+    "fecha": "2026-05-17T04:13:42.679307",
+    "tipo": "conversacion_estrategica",
+    "contenido": "Aji, ¿estás activa? ¿estás pendiente del agente de Bitcoin en este momento? ¿estás pendiente de qué cuenta está operando? y si hay alguna operación abierta en este momento"
   },
-  "total_interacciones": 308
+  "total_interacciones": 309
 }
